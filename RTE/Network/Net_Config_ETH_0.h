@@ -85,7 +85,7 @@
 
 //     <e>IGMP Group Management
 //     <i>Enable or disable Internet Group Management Protocol
-#define ETH0_IGMP_ENABLE        0
+#define ETH0_IGMP_ENABLE        1
 
 //       <o>Membership Table size <2-50>
 //       <i>Number of Groups this host can join

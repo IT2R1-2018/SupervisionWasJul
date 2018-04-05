@@ -417,14 +417,14 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>FichierWeb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Web\FichierWeb.c</FilePath>
-            </File>
-            <File>
               <FileName>UDP_Socket.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\UDP_Socket.c</FilePath>
+            </File>
+            <File>
+              <FileName>FichierWeb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Web\FichierWeb.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -452,19 +452,29 @@
               <FilePath>.\Web\Logo_GEii2.png</FilePath>
             </File>
             <File>
-              <FileName>lcd.cgi</FileName>
-              <FileType>9</FileType>
-              <FilePath>.\Web\lcd.cgi</FilePath>
-            </File>
-            <File>
               <FileName>adc.cgi</FileName>
               <FileType>9</FileType>
               <FilePath>.\Web\adc.cgi</FilePath>
             </File>
             <File>
-              <FileName>led.cgi</FileName>
+              <FileName>parking.jpg</FileName>
               <FileType>9</FileType>
-              <FilePath>.\Web\led.cgi</FilePath>
+              <FilePath>.\Web\parking.jpg</FilePath>
+            </File>
+            <File>
+              <FileName>banner.jpg</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Web\banner.jpg</FilePath>
+            </File>
+            <File>
+              <FileName>L.png</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Web\L.png</FilePath>
+            </File>
+            <File>
+              <FileName>O.png</FileName>
+              <FileType>9</FileType>
+              <FilePath>.\Web\O.png</FilePath>
             </File>
           </Files>
         </Group>

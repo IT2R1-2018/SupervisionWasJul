@@ -18,16 +18,18 @@ uint8_t gateway[NET_ADDR_IP4_LEN];
 uint8_t pri_dns[NET_ADDR_IP4_LEN];
 uint8_t sec_dns[NET_ADDR_IP4_LEN];
 
-
-
 int32_t udp_sock;                       // UDP socket handle
-char AskBattery[2] = {0xAA, 0xAA};
+char AskBattery = 0xAA;
+char AskPresence = 0xBB;
+char AskPlaces = 0xCC;
+
 short tensions;
+char presence1, presence2;
 
 int i;
 
-// Send UDP data to destination client.
-void send_udp_data (char *data, char nbr_data) {
+// Send UDP data to destination client 192.168.0.8
+void send_udp_data_8 (char data, char nbr_data) {
  
   if (udp_sock > 0) {
 		
@@ -36,43 +38,78 @@ void send_udp_data (char *data, char nbr_data) {
     uint8_t *sendbuf;
  
     sendbuf = netUDP_GetBuffer (nbr_data);
-    *sendbuf = *data;
+    *sendbuf = data;
+	
+    netUDP_Send (udp_sock, &addr, sendbuf, nbr_data);
+    
+  }
+}
+
+// Send UDP data to destination client 192.168.0.7
+void send_udp_data_7 (char data, char nbr_data) {
+ 
+  if (udp_sock > 0) {
+		
+    NET_ADDR addr = { NET_ADDR_IP4, 2000, 192, 168, 0, 7 };
+ 
+    uint8_t *sendbuf;
+ 
+    sendbuf = netUDP_GetBuffer (nbr_data);
+    *sendbuf = data;
  
     netUDP_Send (udp_sock, &addr, sendbuf, nbr_data);
     
   }
 }
+
 // Notify the user application about UDP socket events.
 uint32_t udp_cb_func (int32_t socket, const  NET_ADDR *addr, const uint8_t *buf, uint32_t len) {
  
-  char tension[15];
-	char test[15]= "valeur = %d";
+  char chaineT[15];
 	
-  if (buf[0] == 0xAA)  //0xAA + data
+  switch(buf[0]) 
 		{
-		LED_On(1);
-		tensions=buf[1];
-		tensions=tensions<<8;
-		tensions=tensions + buf[2];	
-		tensions = tensions*100/4096;
+			case 0xAA : LED_On(1);																				//Envoie de la tension
+									tensions=buf[1];
+									tensions=tensions<<8;
+									tensions=tensions + buf[2];	
+									tensions = tensions*100/4096;
+									sprintf(chaineT, "valeur = %d", tensions);
+									GLCD_DrawString(0,30,chaineT);
+			break;
 			
-		sprintf(tension, test, tensions);
+			case 0xBB : LED_On(2);																				//Envoie des places dispos
+			
+									if((buf[1] & 0x0F) ==0x01){
+									GLCD_SetForegroundColor (GLCD_COLOR_RED);
+									GLCD_DrawChar(20,50,'O');
+									presence1 = 'O'; }
+									
+									else if ((buf[1] & 0x0F)==0x00){
+									GLCD_SetForegroundColor (GLCD_COLOR_GREEN);
+									GLCD_DrawChar(20,50,'L');
+									presence1 = 'L'; }
+									
+									if((buf[1] & 0xF0) ==0x10){
+									GLCD_SetForegroundColor (GLCD_COLOR_RED);
+									GLCD_DrawChar(60,50,'O');
+									presence2 = 'O'; }
+									
+									else if ((buf[1] & 0xF0)==0x00){
+									GLCD_SetForegroundColor (GLCD_COLOR_GREEN);
+									GLCD_DrawChar(60,50,'L');
+									presence2 = 'L';}
+									
+			case 0xCC : LED_On(3);																				//Envoie de la tension
+									
 		}
-  GLCD_DrawString(0,30,tension);
   return 0;
 }
-
-
 
 char lcd_text[20+1];
 char P2=0;
 
-// Fonction de gestions des requetes de type POST.
-// \param[in]     code          type de données à gérer :
-//                              - 0 = www-url-encoded form data,
-//                              - sinon = autre (hors programme)
-// \param[in]     data          pointeur sur donnee POST
-// \param[in]     len           longueur donnee POST.
+
 void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
   char var[40];
 	
@@ -108,34 +145,25 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
   } while (data);			// Tant qu'il a a des données à traiter
 }
  
-// Fonction de génération des lignes CGI à mettre à jour
-// \param[in]     env           environment string.
-// \param[out]    buf           output data buffer.
-// \return        number of bytes written to output buffer.
+
 uint32_t netCGI_Script (const char *env, char *buf, uint32_t buf_len, uint32_t *pcgi) {
   uint32_t len = 0;
-	uint32_t adv;
 
   switch (env[0]) {
     
     case 'a':
-      // Mise a jour du champ du script CGI
-       len = sprintf (buf, &env[2], lcd_text);     
+			 send_udp_data_7(AskPresence,1);
+       len = sprintf (buf, &env[2], presence1, presence2);     
        break;
 		
-		case 'b':	
-		//	ADC_StartConversion();
-		//	while(ADC_ConversionDone() !=0);
-			
-			//adv = ADC_GetValue();
-			
-			send_udp_data(AskBattery,2);
+		case 'b':																//Etat de charge de la batterie
+			send_udp_data_8(AskBattery,1);
 			len = sprintf(buf, &env[2], tensions);
 			break;
 			
-		case 'd':
-       len = sprintf (buf, &env[2], lcd_text);     
-       break;
+//		case 'd':
+//       len = sprintf (buf, &env[2], lcd_text);     
+//       break;
     }
   return (len);
 }  
@@ -164,10 +192,12 @@ int main (void)
     netUDP_Open (udp_sock, 2000);
 			while(1)
 			{
-		//		if(Buttons_GetState()==1) send_udp_data(AskBattery,2); //Demande d'état de la batterie
-			
-		
+				if(Buttons_GetState()==1){ send_udp_data_8(AskBattery,1); //Demande d'état de la batterie
+																	 osDelay(100);
+																	 send_udp_data_7(AskPresence,1); //Demande d'état de la batterie
+																	 osDelay(100);
+																	 send_udp_data_7(AskPlaces,1);	 //Demande combien de places
+																	}
 			}
- 
 		}
 	}

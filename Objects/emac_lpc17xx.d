@@ -7,8 +7,8 @@
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\emac_lpc17xx.o: U:\IT2R\TP_projet_base\RTE\Device\LPC1768\RTE_Device.h
-.\objects\emac_lpc17xx.o: U:\IT2R\TP_projet_base\RTE\RTE_Components.h
+.\objects\emac_lpc17xx.o: U:\IT2R\SupervisionWasJul\RTE\Device\LPC1768\RTE_Device.h
+.\objects\emac_lpc17xx.o: U:\IT2R\SupervisionWasJul\RTE\RTE_Components.h
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.2.0\CMSIS\RTOS\RTX\INC\cmsis_os.h
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\PACK\Keil\LPC1700_DFP\2.4.0\Device\Include\LPC17xx.h
 .\objects\emac_lpc17xx.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.2.0\CMSIS\Include\core_cm3.h
